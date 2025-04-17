@@ -10,7 +10,7 @@ public class EventService {
         this.events = new ArrayList<>();
     }
 
-    public int createEvent(String title, String location, LocalDate date, int quota) throws IllegalArgumentException {
+    public int createEvent(String title, String location, LocalDate date, int quota) {
         if (quota < 0) {
             throw new IllegalArgumentException("The quota must not be negative!");
         }
@@ -25,7 +25,7 @@ public class EventService {
         return idCounter;
     }
 
-    public void updateEvent(Event event) throws IllegalArgumentException {
+    public void updateEvent(Event event) {
         int i = 0;
         for (Event e : events) {
             if (e.getId() == event.getId()) {
@@ -46,7 +46,7 @@ public class EventService {
         }
     }
 
-    public Event getEventById(int id) throws IllegalArgumentException {
+    public Event getEventById(int id) {
         for (Event e : events ) {
             if (e.getId() == id)
                 return e;
