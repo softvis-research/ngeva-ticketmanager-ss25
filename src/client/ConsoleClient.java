@@ -1,5 +1,7 @@
 package client;
 
+import customer.Customer;
+import customer.CustomerService;
 import event.Event;
 import event.EventService;
 
@@ -10,6 +12,7 @@ import java.time.format.DateTimeParseException;
 public class ConsoleClient {
     public ConsoleClient() {
         this.eventService = new EventService();
+        this.customerService = new CustomerService();
     }
 
     public void start() {
@@ -42,6 +45,24 @@ public class ConsoleClient {
             case "f":
                 deleteAllEvents();
                 break;
+            case "1":
+                createNewCustomer();
+                break;
+            case "2":
+                readCustomerById();
+                break;
+            case "3":
+                updateCustomer();
+                break;
+            case "4":
+                deleteCustomer();
+                break;
+            case "5":
+                readAllCustomers();
+                break;
+            case "6":
+                deleteAllCustomers();
+                break;
             case "x":
                 printGoodBye();
                 break;
@@ -70,7 +91,7 @@ public class ConsoleClient {
             System.out.println("\nCurrently there are no events available.");
         } else {
             System.out.println("\nList of all events:");
-            eventService.getAllEvents().forEach(this::print);
+            events.forEach(this::print);
         }
     }
 
@@ -165,9 +186,111 @@ public class ConsoleClient {
         }
     }
 
+    private void deleteAllCustomers() {
+        customerService.deleteAllCustomers();
+        System.out.println("\nAll customers were deleted.");
+    }
+
+    private void readAllCustomers() {
+        var customers = customerService.getAllCustomers();
+        if (customers.isEmpty()) {
+            System.out.println("\nCurrently there are no customers available.");
+        } else {
+            System.out.println("\nList of all customers:");
+            customers.forEach(this::print);
+        }
+    }
+
+    private void deleteCustomer() {
+        try {
+            System.out.println("\nPlease enter the id of the customer who should be deleted:");
+            long id = Long.valueOf(readInput());
+            customerService.deleteCustomer(id);
+            System.out.println("\nThe customer with the id " + id + " was deleted.");
+        } catch (NumberFormatException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Please enter a number as id!");
+        }
+    }
+
+    private void updateCustomer() {
+        try {
+            System.out.println("\nPlease enter the id of the customer who should be modified:");
+            long id = Long.valueOf(readInput());
+            Customer customer = customerService.getCustomerById(id);
+            System.out.println("\nThe current values of the customer are:");
+            print(customer);
+
+            System.out.println("\nPlease enter the new values of the event:");
+            System.out.print("Username: ");
+            customer.setUserName(readInput());
+
+            System.out.print("Email address: ");
+            customer.setEmailAddress(readInput());
+
+            System.out.print("Birth date (yyyy-mm-dd): ");
+            customer.setBirthDate(LocalDate.parse(readInput()));
+
+            customerService.updateCustomer(customer);
+
+            System.out.println("\nThe customer with the id " + id + " was successfully updated.");
+        } catch (NumberFormatException illegalNumber) {
+            System.err.println(illegalNumber.getMessage());
+            System.err.println("Please enter a valid number!");
+        } catch (DateTimeParseException illegalDate) {
+            System.err.println(illegalDate.getMessage());
+            System.err.println("Please enter the date in the format: yyyy-mm-dd!");
+        } catch (IllegalArgumentException invalidID) {
+            System.err.println(invalidID.getMessage());
+            System.err.println("Please enter an actual id of a customer!");
+        }
+    }
+
+    private void readCustomerById() {
+        try {
+            System.out.println("\nPlease enter the id of the event which should be read:");
+            long id = Long.valueOf(readInput());
+            print(customerService.getCustomerById(id));
+        } catch (NumberFormatException illegalID) {
+            System.err.println(illegalID.getMessage());
+            System.err.println("Please enter a number as id!");
+        } catch (IllegalArgumentException invalidID) {
+            System.err.println(invalidID.getMessage());
+            System.err.println("Please enter an actual id of a customer!");
+        }
+    }
+
+    private void createNewCustomer() {
+        try {
+            System.out.println("\nPlease enter the characteristics of the customer which should be created:");
+
+            System.out.print("Username: ");
+            String userName = readInput();
+
+            System.out.print("Email address: ");
+            String emailAddress = readInput();
+
+            System.out.print("Birth date (yyyy-mm-dd): ");
+            LocalDate birthDate = LocalDate.parse(readInput());
+
+            long id = customerService.createCustomer(userName, emailAddress, birthDate);
+            System.out.println("\nSuccessfully created customer with the id = " + id);
+        } catch (DateTimeParseException illegalDate) {
+            System.err.println(illegalDate.getMessage());
+            System.err.println("Please enter the date in the format: yyyy-mm-dd!");
+        } catch (IllegalArgumentException illegalCustomerParameter) {
+            System.err.println(illegalCustomerParameter.getMessage());
+        }
+    }
+
     private void print(Event e) {
         System.out.println();
         System.out.println(e);
+    }
+
+    private void print(Customer c) {
+        System.out.println();
+        System.out.println(c);
     }
 
     private String readInput() {
@@ -180,15 +303,24 @@ public class ConsoleClient {
     }
 
     private void printMainMenu() {
-        System.out.println("\nPlease choose one of the following options by entering the corresponding letter:");
-        System.out.println("(a) Create a new Event");
+        System.out.println("\nPlease choose one of the following options by entering the corresponding letter or digit:");
+        System.out.println("\nEvent Processing");
+        System.out.println("(a) Create a new event");
         System.out.println("(b) Read an event");
         System.out.println("(c) Change an event");
         System.out.println("(d) Delete an event");
         System.out.println("(e) Read all events");
         System.out.println("(f) Delete all events");
-        System.out.println("(x) Exit\n");
+        System.out.println("\nCustomer Processing");
+        System.out.println("(1) Create a new customer");
+        System.out.println("(2) Read a customer");
+        System.out.println("(3) Change a customer");
+        System.out.println("(4) Delete a customer");
+        System.out.println("(5) Read all customers");
+        System.out.println("(6) Delete all customers");
+        System.out.println("\n(x) Exit\n");
     }
 
     private EventService eventService;
+    private CustomerService customerService;
 }
