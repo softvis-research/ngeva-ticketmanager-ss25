@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Event {
 
-    public Event(int id, String title, String location, LocalDate date, int quota) {
+    public Event(long id, String title, String location, LocalDate date, int quota) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -21,13 +21,14 @@ public class Event {
 
     @Override
     public String toString() {
-        return "title='" + title + '\'' + ",\n" +
+        return "id='" + id + '\'' + ",\n" +
+                "title='" + title + '\'' + ",\n" +
                 "place='" + location + '\'' + ",\n" +
                 "date=" + date + ",\n" +
                 "quota=" + quota;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -63,7 +64,7 @@ public class Event {
         this.quota = quota;
     }
 
-    private int id;
+    private long id;
 
     private String title;
 
