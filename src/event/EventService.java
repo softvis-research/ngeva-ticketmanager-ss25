@@ -56,7 +56,7 @@ public class EventService {
     }
 
     public Collection<Event> getAllEvents() {
-        return (Collection<Event>) events.clone();
+        return new ArrayList<>(events);
     }
 
     private ArrayList<Event> events;
